@@ -253,6 +253,26 @@ python scripts/fix_year_and_split.py
 }
 ```
 
+### 预训练模型引用
+
+本项目使用的预训练模型来自 **哈工大·讯飞** 联合实验室，请同时引用：
+
+```bibtex
+@inproceedings{cui-etal-2020-revisiting,
+  title = {Revisiting Pre-Trained Models for {C}hinese Natural Language Processing},
+  author = {Cui, Yiming and Che, Wanxiang and Liu, Ting and Qin, Bing and Yang, Ziqing and Wang, Shijin and Hu, Guoping},
+  booktitle = {Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing: Findings},
+  year = {2020},
+  publisher = {Association for Computational Linguistics},
+  url = {https://aclanthology.org/2020.findings-emnlp.58},
+  doi = {10.18653/v1/2020.findings-emnlp.58}
+}
+```
+
+> 📄 **论文**: [Revisiting Pre-Trained Models for Chinese Natural Language Processing](https://aclanthology.org/2020.findings-emnlp.58)  
+> 🔗 **模型**: [hfl/chinese-roberta-wwm-ext](https://huggingface.co/hfl/chinese-roberta-wwm-ext)  
+> 🏛️ **机构**: 哈工大社会计算与信息检索研究中心 (HIT-SCIR) & 科大讯飞 (iFlytek)
+
 ---
 
 ## 📄 License
