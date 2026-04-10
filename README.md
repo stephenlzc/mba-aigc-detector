@@ -1,6 +1,7 @@
 # MBA-AIGC-Detector
 
-> 🔍 基于BERT的MBA论文AIGC风险检测系统
+> 🔬 MBA论文AIGC检测模型构建研究  
+> 从原始PDF到训练好的分类模型的完整建模流程 (S1-S8)
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3+-orange.svg)](https://scikit-learn.org/)
@@ -8,25 +9,42 @@
 
 ---
 
-## 🌟 项目亮点
+## 📋 项目说明
 
-- **高精度检测**: F1 = **0.967**, AUC = **0.994**
-- **中文预训练模型**: 基于 [hfl/chinese-roberta-wwm-ext](https://huggingface.co/hfl/chinese-roberta-wwm-ext) (哈工大讯飞联合实验室)
-- **多维度变体**: 6种AI生成变体类型
-- **双轨评估**: 标准集 + 困难集双重验证
-- **工程化流程**: S1-S8完整流水线
-- **可解释性**: BERT特征 (768维) + 统计特征 (13维) 融合
+本项目是 **MBA论文AIGC风险检测的模型构建研究**，涵盖从原始数据收集到模型训练评估的完整建模流程。
+
+⚠️ **注意**：本项目为**模型构建阶段**，提供训练好的分类器和完整的建模流程，**不包含**生产级的API服务或Web界面。
+
+### 交付物
+
+- ✅ 完整的S1-S8数据处理与建模流程
+- ✅ 基于BERT+GBDT的训练好的检测模型
+- ✅ 27,834条标注数据（人类写作 + 6种AI变体）
+- ✅ 可复现的研究方法论
+- ❌ 生产级检测API（需另行开发）
+- ❌ Web界面或前端系统（需另行开发）
 
 ---
 
-## 📊 性能指标
+## 🌟 研究亮点
 
-| 指标 | 要求 | 实际值 | 状态 |
-|------|------|--------|------|
-| Precision | ≥0.75 | **0.997** | ✅ 超标33% |
-| Recall | ≥0.70 | **0.858** | ✅ 超标23% |
-| F1 | ≥0.72 | **0.967** | ✅ 超标34% |
-| PR-AUC | ≥0.78 | **0.994** | ✅ 超标27% |
+- **高精度模型**: F1 = **0.967**, AUC = **0.994**
+- **中文预训练模型**: 基于 [hfl/chinese-roberta-wwm-ext](https://huggingface.co/hfl/chinese-roberta-wwm-ext) (哈工大讯飞联合实验室)
+- **多维度变体**: 6种AI生成变体类型，模拟真实AIGC场景
+- **双轨评估**: 标准集 + 困难集双重验证
+- **可复现流程**: S1-S8完整数据建模流水线
+- **可解释特征**: BERT特征 (768维) + 统计特征 (13维) 融合
+
+---
+
+## 📊 模型性能
+
+| 指标 | 基线要求 | 实际值 | 提升 |
+|------|---------|--------|------|
+| Precision | ≥0.75 | **0.997** | +33% |
+| Recall | ≥0.70 | **0.858** | +23% |
+| F1 | ≥0.72 | **0.967** | +34% |
+| PR-AUC | ≥0.78 | **0.994** | +27% |
 
 ---
 
@@ -34,7 +52,7 @@
 
 ```
 mba-aigc-detector/
-├── scripts/                    # 核心脚本
+├── scripts/                    # 核心建模脚本
 │   ├── S1_5_quality_control_phase3.py      # S1.5: 数据清洗
 │   ├── S2_paragraph_segmentation_phase3.py # S2: 段落切分
 │   ├── S3_metadata_extraction_phase3.py    # S3: 元数据提取
@@ -106,7 +124,7 @@ MOONSHOT_API_KEY=your_moonshot_key
 # BERT_MODEL_PATH=/path/to/chinese-roberta-wwm-ext
 ```
 
-### 执行流程
+### 建模流程
 
 ```bash
 # 1. 数据准备 (S1-S4)
@@ -132,7 +150,7 @@ python scripts/S8_evaluate_and_inference_phase3.py
 
 ---
 
-## 📖 核心特性
+## 📖 核心方法
 
 ### S5: 并发AI变体生成
 
@@ -231,12 +249,20 @@ python scripts/fix_year_and_split.py
 
 ---
 
-## 🎯 应用场景
+## 🎯 应用场景与局限
 
-- 📄 MBA论文AIGC风险检测
-- 📊 段落级概率输出
-- 🔍 可解释检测结果
-- 📋 结构化检测报告
+### 适用场景
+
+- 🔬 **学术研究**: AIGC检测方法研究 baseline
+- 📊 **模型复现**: 复现本研究的训练和评估流程
+- 🧪 **特征分析**: 分析BERT特征在AIGC检测中的有效性
+- 🏗️ **系统开发**: 为本项目训练好的模型开发上层应用系统
+
+### 当前局限
+
+- ❌ **非生产系统**: 本项目是模型构建流程，不包含API/Web界面
+- ❌ **需额外开发**: 如需检测服务，需基于本模型另行开发应用层
+- ❌ **专注MBA领域**: 模型针对MBA论文优化，泛化能力有限
 
 ---
 
@@ -246,10 +272,11 @@ python scripts/fix_year_and_split.py
 
 ```bibtex
 @software{mba_aigc_detector,
-  title = {MBA-AIGC-Detector: 基于BERT的MBA论文AIGC风险检测系统},
+  title = {MBA-AIGC-Detector: MBA论文AIGC风险检测模型构建},
   author = {stephenlzc},
   year = {2026},
-  url = {https://github.com/stephenlzc/mba-aigc-detector}
+  url = {https://github.com/stephenlzc/mba-aigc-detector},
+  note = {模型构建研究项目，提供完整的S1-S8建模流程}
 }
 ```
 
@@ -287,4 +314,4 @@ MIT License
 
 ---
 
-**Made with ❤️ for MBA Academic Integrity**
+**Made with ❤️ for MBA Academic Integrity Research**
