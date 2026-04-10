@@ -11,10 +11,11 @@
 ## 🌟 项目亮点
 
 - **高精度检测**: F1 = **0.967**, AUC = **0.994**
+- **中文预训练模型**: 基于 [hfl/chinese-roberta-wwm-ext](https://huggingface.co/hfl/chinese-roberta-wwm-ext) (哈工大讯飞联合实验室)
 - **多维度变体**: 6种AI生成变体类型
 - **双轨评估**: 标准集 + 困难集双重验证
 - **工程化流程**: S1-S8完整流水线
-- **可解释性**: BERT特征 + 统计特征融合
+- **可解释性**: BERT特征 (768维) + 统计特征 (13维) 融合
 
 ---
 
@@ -56,7 +57,31 @@ mba-aigc-detector/
 - Python 3.8+
 - CUDA 11.8+ (推荐，用于GPU加速)
 - 16GB+ RAM
-- 50GB+ 磁盘空间
+- 50GB+ 磁盘空间 (含模型文件)
+
+### 预训练模型
+
+本项目使用 **哈工大·讯飞** 联合发布的中文全词掩码预训练模型：
+
+| 模型 | 链接 | 说明 |
+|------|------|------|
+| chinese-roberta-wwm-ext | [🤗 Hugging Face](https://huggingface.co/hfl/chinese-roberta-wwm-ext) | 中文RoBERTa-wwm扩展版 (推荐) |
+
+**模型特点**:
+- 基于全词掩码 (Whole Word Masking) 技术
+- 针对中文优化，更适合中文文本理解
+- 模型大小：约400MB
+- 输出维度：768维 (CLS token)
+
+**下载方式**：
+```bash
+# 方式1: 自动下载 (执行S6时会自动从Hugging Face下载)
+python scripts/S6_feature_engineering_phase3.py
+
+# 方式2: 手动下载 (推荐，可指定本地路径)
+git lfs install
+git clone https://huggingface.co/hfl/chinese-roberta-wwm-ext
+```
 
 ### 安装依赖
 
@@ -76,6 +101,9 @@ ALIYUN_API_KEY=your_aliyun_key
 MOONSHOT_API_KEY=your_moonshot_key
 
 # 可选: ZHIPU_API_KEY=your_zhipu_key
+
+# BERT模型路径 (可选，默认自动下载)
+# BERT_MODEL_PATH=/path/to/chinese-roberta-wwm-ext
 ```
 
 ### 执行流程
@@ -91,8 +119,9 @@ python scripts/S4_dataset_split_phase3.py
 python scripts/S5_concurrent.py
 
 # 3. 特征工程 (S6)
+# 首次运行会自动下载 chinese-roberta-wwm-ext 模型 (约400MB)
 python scripts/S6_feature_engineering_phase3.py \
-  --model_path /path/to/bert_model
+  --model_path /path/to/chinese-roberta-wwm-ext
 
 # 4. 模型训练 (S7)
 python scripts/S7_train_models_phase3.py
@@ -120,12 +149,23 @@ python scripts/S8_evaluate_and_inference_phase3.py
 
 ### S6: 特征工程
 
+使用 **chinese-roberta-wwm-ext** 提取BERT特征：
+
 - **BERT特征**: 768维 (CLS token)
+  - 预训练模型：[hfl/chinese-roberta-wwm-ext](https://huggingface.co/hfl/chinese-roberta-wwm-ext)
+  - 模型类型：RoBERTa-wwm (中文全词掩码)
+  - 更适合中文文本特征提取
 - **统计特征**: 13维
   - 字符数、句子数、中英文比例
   - 标点统计、词汇多样性
   - 引用/公式/表格/图片标记
 - **总计**: 781维特征
+
+**GPU优化**:
+```python
+BERT_BATCH_SIZE = 32  # GPU
+CPU_BATCH_SIZE = 8    # CPU
+```
 
 ### S7: 模型训练
 
