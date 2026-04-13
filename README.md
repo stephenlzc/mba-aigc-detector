@@ -1,317 +1,224 @@
-# MBA-AIGC-Detector
+---
+language:
+  - zh
+  - en
+tags:
+  - aigc-detection
+  - text-classification
+  - decision-tree
+  - chinese
+  - academic-paper
+  - mba-thesis
+license: mit
+library_name: scikit-learn
+base_model:
+  - hfl/chinese-roberta-wwm-ext
+---
 
-> 🔬 MBA论文AIGC检测模型构建研究  
-> 从原始PDF到训练好的分类模型的完整建模流程 (S1-S8)
+# MBA论文AIGC检测系统
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3+-orange.svg)](https://scikit-learn.org/)
-[![transformers](https://img.shields.io/badge/transformers-4.30+-yellow.svg)](https://huggingface.co/transformers/)
+[![HuggingFace](https://img.shields.io/badge/HuggingFace-Model-orange.svg)](https://huggingface.co/stephenlzc/mba-aigc-detector)
+
+基于5模型并联融合的MBA论文AIGC风险识别系统。
 
 ---
 
-## 📋 项目说明
+## 项目链接
 
-本项目是 **MBA论文AIGC风险检测的模型构建研究**，涵盖从原始数据收集到模型训练评估的完整建模流程。
-
-⚠️ **注意**：本项目为**模型构建阶段**，提供训练好的分类器和完整的建模流程，**不包含**生产级的API服务或Web界面。
-
-### 交付物
-
-- ✅ 完整的S1-S8数据处理与建模流程
-- ✅ 基于BERT+GBDT的训练好的检测模型
-- ✅ 27,834条标注数据（人类写作 + 6种AI变体）
-- ✅ 可复现的研究方法论
-- ❌ 生产级检测API（需另行开发）
-- ❌ Web界面或前端系统（需另行开发）
-
----
-
-## 🌟 研究亮点
-
-- **高精度模型**: F1 = **0.967**, AUC = **0.994**
-- **中文预训练模型**: 基于 [hfl/chinese-roberta-wwm-ext](https://huggingface.co/hfl/chinese-roberta-wwm-ext) (哈工大讯飞联合实验室)
-- **多维度变体**: 6种AI生成变体类型，模拟真实AIGC场景
-- **双轨评估**: 标准集 + 困难集双重验证
-- **可复现流程**: S1-S8完整数据建模流水线
-- **可解释特征**: BERT特征 (768维) + 统计特征 (13维) 融合
-
----
-
-## 📊 模型性能
-
-| 指标 | 基线要求 | 实际值 | 提升 |
-|------|---------|--------|------|
-| Precision | ≥0.75 | **0.997** | +33% |
-| Recall | ≥0.70 | **0.858** | +23% |
-| F1 | ≥0.72 | **0.967** | +34% |
-| PR-AUC | ≥0.78 | **0.994** | +27% |
-
----
-
-## 🗂️ 项目结构
-
-```
-mba-aigc-detector/
-├── scripts/                    # 核心建模脚本
-│   ├── S1_5_quality_control_phase3.py      # S1.5: 数据清洗
-│   ├── S2_paragraph_segmentation_phase3.py # S2: 段落切分
-│   ├── S3_metadata_extraction_phase3.py    # S3: 元数据提取
-│   ├── S4_dataset_split_phase3.py          # S4: 时间切分
-│   ├── S5_concurrent.py                    # S5: AI变体生成 ⭐
-│   ├── S6_feature_engineering_phase3.py    # S6: 特征工程 ⭐
-│   ├── S7_train_models_phase3.py           # S7: 模型训练 ⭐
-│   └── S8_evaluate_and_inference_phase3.py # S8: 评估测试 ⭐
-├── REPORT.md                   # 完整方法论报告
-├── DIRECTORY_STRUCTURE.md      # 目录结构说明
-└── README.md                   # 本文件
-```
-
----
-
-## 🚀 快速开始
-
-### 环境要求
-
-- Python 3.8+
-- CUDA 11.8+ (推荐，用于GPU加速)
-- 16GB+ RAM
-- 50GB+ 磁盘空间 (含模型文件)
-
-### 预训练模型
-
-本项目使用 **哈工大·讯飞** 联合发布的中文全词掩码预训练模型：
-
-| 模型 | 链接 | 说明 |
+| 平台 | 链接 | 说明 |
 |------|------|------|
-| chinese-roberta-wwm-ext | [🤗 Hugging Face](https://huggingface.co/hfl/chinese-roberta-wwm-ext) | 中文RoBERTa-wwm扩展版 (推荐) |
+| **GitHub** | https://github.com/stephenlzc/mba-aigc-detector | 本仓库：完整代码、文档 |
+| **HuggingFace** | https://huggingface.co/stephenlzc/mba-aigc-detector | 预训练模型权重（~60KB） |
 
-**模型特点**:
-- 基于全词掩码 (Whole Word Masking) 技术
-- 针对中文优化，更适合中文文本理解
-- 模型大小：约400MB
-- 输出维度：768维 (CLS token)
+## 特点
 
-**下载方式**：
-```bash
-# 方式1: 自动下载 (执行S6时会自动从Hugging Face下载)
-python scripts/S6_feature_engineering_phase3.py
+- 🎯 **高Recall设计**: 宁可假阳不要假阴，最大化检出率
+- 🔗 **5模型并联**: OR逻辑，任一阳性即阳性
+- 📊 **CNKI校准**: 输出分数接近知网AIGC检测AI特征值
+- 🚀 **本地运行**: 支持ollama本地部署，保护隐私
 
-# 方式2: 手动下载 (推荐，可指定本地路径)
-git lfs install
-git clone https://huggingface.co/hfl/chinese-roberta-wwm-ext
-```
+## 快速开始
 
 ### 安装依赖
 
 ```bash
-pip install numpy scikit-learn transformers torch httpx python-dotenv
+pip install -r requirements.txt
 ```
 
-### 配置环境变量
+### 下载模型
 
-创建 `.env` 文件：
+从HuggingFace下载预训练模型（总共~60KB，轻量高效）：
 
 ```bash
-# API Keys (用于S5 AI变体生成)
-SERVERCHAN_SENDKEY=your_sendkey
-DEEPSEEK_API_KEY=your_deepseek_key
-ALIYUN_API_KEY=your_aliyun_key
-MOONSHOT_API_KEY=your_moonshot_key
+# 方法1: 使用huggingface-cli
+huggingface-cli download stephenlzc/mba-aigc-detector --local-dir ./models
 
-# 可选: ZHIPU_API_KEY=your_zhipu_key
+# 方法2: 使用git-lfs
+git lfs install
+git clone https://huggingface.co/stephenlzc/mba-aigc-detector ./models
 
-# BERT模型路径 (可选，默认自动下载)
-# BERT_MODEL_PATH=/path/to/chinese-roberta-wwm-ext
+# 方法3: 直接下载
+wget https://huggingface.co/stephenlzc/mba-aigc-detector/resolve/main/select5_tree_d2.joblib -O ./models/select5_tree_d2.joblib
+wget https://huggingface.co/stephenlzc/mba-aigc-detector/resolve/main/select10_tree_d2.joblib -O ./models/select10_tree_d2.joblib
+wget https://huggingface.co/stephenlzc/mba-aigc-detector/resolve/main/select15_tree_d3.joblib -O ./models/select15_tree_d3.joblib
+wget https://huggingface.co/stephenlzc/mba-aigc-detector/resolve/main/select20_tree_d2.joblib -O ./models/select20_tree_d2.joblib
+wget https://huggingface.co/stephenlzc/mba-aigc-detector/resolve/main/bert_tree_d1.joblib -O ./models/bert_tree_d1.joblib
 ```
 
-### 建模流程
+### 单文档检测
 
-```bash
-# 1. 数据准备 (S1-S4)
-python scripts/S1_5_quality_control_phase3.py
-python scripts/S2_paragraph_segmentation_phase3.py
-python scripts/S3_metadata_extraction_phase3.py
-python scripts/S4_dataset_split_phase3.py
-
-# 2. AI变体生成 (S5)
-python scripts/S5_concurrent.py
-
-# 3. 特征工程 (S6)
-# 首次运行会自动下载 chinese-roberta-wwm-ext 模型 (约400MB)
-python scripts/S6_feature_engineering_phase3.py \
-  --model_path /path/to/chinese-roberta-wwm-ext
-
-# 4. 模型训练 (S7)
-python scripts/S7_train_models_phase3.py
-
-# 5. 评估测试 (S8)
-python scripts/S8_evaluate_and_inference_phase3.py
-```
-
----
-
-## 📖 核心方法
-
-### S5: 并发AI变体生成
-
-- **3槽位并发架构**: train/dev/test并行处理
-- **15分钟轮换机制**: 避免API限流
-- **9分钟Fallback**: 自动切换备用模型
-- **6种变体类型**:
-  - `hard_human`: 轻微润色
-  - `multi_round_rewrite`: 多轮改写
-  - `partial_rewrite`: 部分改写
-  - `back_translation_mix`: 回译混合
-  - `polish_manual_mix`: 手动润色混合
-  - `standard_rewrite`: 标准改写
-
-### S6: 特征工程
-
-使用 **chinese-roberta-wwm-ext** 提取BERT特征：
-
-- **BERT特征**: 768维 (CLS token)
-  - 预训练模型：[hfl/chinese-roberta-wwm-ext](https://huggingface.co/hfl/chinese-roberta-wwm-ext)
-  - 模型类型：RoBERTa-wwm (中文全词掩码)
-  - 更适合中文文本特征提取
-- **统计特征**: 13维
-  - 字符数、句子数、中英文比例
-  - 标点统计、词汇多样性
-  - 引用/公式/表格/图片标记
-- **总计**: 781维特征
-
-**GPU优化**:
 ```python
-BERT_BATCH_SIZE = 32  # GPU
-CPU_BATCH_SIZE = 8    # CPU
+from fusion_detector import FusionDetector
+from feature_extractor import FeatureExtractor
+from document_processor import DocumentProcessor
+
+# 初始化
+detector = FusionDetector(models_dir="./models")
+extractor = FeatureExtractor()
+processor = DocumentProcessor()
+
+# 处理文档
+text = processor.read_pdf("paper.pdf")
+paragraphs = processor.split_paragraphs(text)
+
+# 提取特征并检测
+features = [extractor.extract(p) for p in paragraphs]
+result = detector.predict_document(features)
+
+print(f"AIGC分数: {result['doc_calibrated_score']:.1%}")
+print(f"风险等级: {result['risk_level']}")
 ```
 
-### S7: 模型训练
+### 使用校准版检测器（推荐）
 
-- **双轨训练**: 标准样本 + 困难样本
-- **3种模型**: GBDT, Random Forest, Logistic Regression
-- **自适应加载**: 自动检测特征格式
-- **最佳模型选择**: 基于困难集F1
+```python
+from fusion_detector_cnki_calibrated import create_calibrated_detector
 
-### S8: 双轨评估
+# 方法1: 通过参数指定模型目录
+detector = create_calibrated_detector(models_dir="./models")
 
-- **标准集评估**: 常规测试集
-- **困难集评估**: hard_human变体测试
-- **过拟合检测**: 自动风险预警
-- **不确定样本**: 概率0.4-0.6样本统计
+# 方法2: 通过环境变量设置模型目录
+import os
+os.environ["MBA_AIGC_MODEL_DIR"] = "./models"
+detector = create_calibrated_detector()
 
----
+result = detector.predict_document(features)
 
-## 📚 详细文档
+# 输出接近CNKI的AI特征值
+print(f"CNKI校准AIGC分数: {result['doc_calibrated_score']:.1%}")
+```
 
-- [完整方法论报告](./REPORT.md) - 详细的使用指南和优化说明
-- [目录结构说明](./DIRECTORY_STRUCTURE.md) - 项目结构详解
-
----
-
-## 🔧 高级用法
-
-### 补充特定变体
+### 命令行使用
 
 ```bash
-python scripts/S5_concurrent.py \
-  --supplement_mode \
-  --supplement_targets '[
-    {"split": "test", "variant": "hard_human", "target": 100}
-  ]'
+# 基本使用
+python inference.py paper.pdf
+
+# 指定输出文件
+python inference.py paper.pdf -o result.json
+
+# 指定模型目录
+python inference.py paper.pdf --models ./models -o result.json
+
+# 或通过环境变量设置模型目录
+export MBA_AIGC_MODEL_DIR="./models"
+python inference.py paper.pdf
 ```
 
-### 修复year字段
+## 模型架构
 
-```bash
-python scripts/fix_year_and_split.py
+```
+输入文本
+    │
+    ├─→ Select5_Tree ──┐
+    ├─→ Select10_Tree ─┤
+    ├─→ Select15_Tree ─┼─→ OR Gate ─→ CNKI校准 ─→ 输出
+    ├─→ Select20_Tree ─┤  (任一阳性即阳性)
+    └─→ BERT_Tree ─────┘
 ```
 
----
+### 预训练模型
 
-## 📈 数据规模
+本系统的BERT特征提取基于中文RoBERTa模型：
 
-| 类型 | 数量 |
-|------|------|
-| 人类样本 | 21,876 条 |
-| AI变体 | 5,958 条 |
-| **总计** | **27,834 条** |
+| 模型 | 来源 | 用途 | 链接 |
+|------|------|------|------|
+| **chinese-roberta-wwm-ext** | 哈工大讯飞联合实验室 | 768维语义特征提取 | https://huggingface.co/hfl/chinese-roberta-wwm-ext |
 
-### 6种变体分布
+RoBERTa (Robustly optimized BERT approach) 采用全词掩码(Whole Word Masking)技术，对中文文本有更好的表征能力。
 
-| 变体类型 | 数量 |
-|---------|------|
-| hard_human | 1,457 条 |
-| standard_rewrite | 1,162 条 |
-| polish_manual_mix | 1,035 条 |
-| partial_rewrite | 921 条 |
-| back_translation_mix | 753 条 |
-| multi_round_rewrite | 630 条 |
+### 模型大小优势
 
----
+本系统采用决策树架构，模型文件极小：
 
-## 🎯 应用场景与局限
+| 模型 | 文件大小 | 说明 |
+|------|----------|------|
+| select5_tree_d2 | ~4KB | 5特征决策树 |
+| select10_tree_d2 | ~8KB | 10特征决策树 |
+| select15_tree_d3 | ~16KB | 15特征决策树 |
+| select20_tree_d2 | ~12KB | 20特征决策树 |
+| bert_tree_d1 | ~6KB | BERT特征决策树 |
+| **总计** | **~60KB** | 全部5个模型 |
 
-### 适用场景
+相比神经网络模型（通常几MB到几GB），本系统模型体积**缩小了99%以上**，适合轻量部署和资源受限环境。
 
-- 🔬 **学术研究**: AIGC检测方法研究 baseline
-- 📊 **模型复现**: 复现本研究的训练和评估流程
-- 🧪 **特征分析**: 分析BERT特征在AIGC检测中的有效性
-- 🏗️ **系统开发**: 为本项目训练好的模型开发上层应用系统
+## 性能指标
 
-### 当前局限
+| 指标 | Train | Test |
+|------|-------|------|
+| Recall | 0.895 | 0.974 |
+| 假阴性率 | 10.5% | 2.6% |
 
-- ❌ **非生产系统**: 本项目是模型构建流程，不包含API/Web界面
-- ❌ **需额外开发**: 如需检测服务，需基于本模型另行开发应用层
-- ❌ **专注MBA领域**: 模型针对MBA论文优化，泛化能力有限
+## 目录结构
 
----
+```
+.
+├── fusion_detector.py              # 基础检测器
+├── fusion_detector_cnki_calibrated.py  # CNKI校准版 ⭐推荐
+├── feature_extractor.py            # 特征提取
+├── document_processor.py           # 文档处理
+├── inference.py                    # 推理脚本
+├── requirements.txt                # 依赖
+└── README.md                       # 本文件
+```
 
-## 📝 引用
+## 配置文件
 
-如果你使用了本项目，请引用：
+### 校准配置 (calibration_config.json)
 
-```bibtex
-@software{mba_aigc_detector,
-  title = {MBA-AIGC-Detector: MBA论文AIGC风险检测模型构建},
-  author = {stephenlzc},
-  year = {2026},
-  url = {https://github.com/stephenlzc/mba-aigc-detector},
-  note = {模型构建研究项目，提供完整的S1-S8建模流程}
+```json
+{
+  "calibration_factor": 0.3,
+  "thresholds": {
+    "select5_tree_d2": 0.50,
+    "select10_tree_d2": 0.50,
+    "select15_tree_d3": 0.50,
+    "select20_tree_d2": 0.50,
+    "bert_tree_d1": 0.40
+  },
+  "risk_thresholds": {
+    "low": 0.15,
+    "medium": 0.30,
+    "high": 0.50
+  }
 }
 ```
 
-### 预训练模型引用
+## 风险等级说明
 
-本项目使用的预训练模型来自 **哈工大·讯飞** 联合实验室，请同时引用：
+| 等级 | AIGC分数 | 说明 |
+|------|----------|------|
+| 低风险 | <15% | 疑似人工写作 |
+| 中风险 | 15-30% | 部分AI痕迹 |
+| 较高风险 | 30-50% | 明显AI痕迹 |
+| 高风险 | >50% | 高度疑似AI生成 |
 
-```bibtex
-@inproceedings{cui-etal-2020-revisiting,
-  title = {Revisiting Pre-Trained Models for {C}hinese Natural Language Processing},
-  author = {Cui, Yiming and Che, Wanxiang and Liu, Ting and Qin, Bing and Yang, Ziqing and Wang, Shijin and Hu, Guoping},
-  booktitle = {Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing: Findings},
-  year = {2020},
-  publisher = {Association for Computational Linguistics},
-  url = {https://aclanthology.org/2020.findings-emnlp.58},
-  doi = {10.18653/v1/2020.findings-emnlp.58}
-}
-```
+## 免责声明
 
-> 📄 **论文**: [Revisiting Pre-Trained Models for Chinese Natural Language Processing](https://aclanthology.org/2020.findings-emnlp.58)  
-> 🔗 **模型**: [hfl/chinese-roberta-wwm-ext](https://huggingface.co/hfl/chinese-roberta-wwm-ext)  
-> 🏛️ **机构**: 哈工大社会计算与信息检索研究中心 (HIT-SCIR) & 科大讯飞 (iFlytek)
+本系统输出仅供参考，不构成对学术不端行为的直接认定，也不替代学校官方检测系统或CNKI等权威检测结果。
 
----
+## License
 
-## 📄 License
-
-MIT License
-
----
-
-## 🤝 贡献
-
-欢迎提交Issue和PR！
-
----
-
-**Made with ❤️ for MBA Academic Integrity Research**
+MIT License - 详见 [LICENSE](LICENSE) 文件

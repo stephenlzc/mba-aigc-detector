@@ -1,0 +1,36 @@
+{
+  "calibration_factor": 0.3,
+  "thresholds": {
+    "select5_tree_d2": 0.5,
+    "select10_tree_d2": 0.5,
+    "select15_tree_d3": 0.5,
+    "select20_tree_d2": 0.5,
+    "bert_tree_d1": 0.4
+  },
+  "reference_data": {
+    "S\u751f\u7269\u516c\u53f8NIPT\u4ea7\u54c1": {
+      "filename": "20251202\u8fde\u667a\u806a-S\u751f\u7269\u533b\u836f\u516c\u53f8NIPT\u4ea7\u54c1\u51fa\u6d77\u8425\u9500\u73b0\u72b6\u53ca\u63d0\u5347\u7b56\u7565\u7814\u7a76-V8.2\uff08\u6253\u5370\u7248\uff09.pdf",
+      "cnki_aigc_score": 0.225,
+      "my_model_score": 0.671,
+      "sections": {
+        "part1": 0.205,
+        "part2": 0.057,
+        "chapter3": 0.0,
+        "chapter4": 0.0,
+        "chapter5": 0.0,
+        "chapter6": 0.72
+      }
+    },
+    "ZS\u516c\u53f8\u5458\u5de5\u6fc0\u52b1": {
+      "filename": "20260116 ZS\u516c\u53f8\u5458\u5de5\u6fc0\u52b1\u7b56\u7565\u4f18\u5316\u7814\u7a76.pdf",
+      "cnki_aigc_score": 0.333,
+      "my_model_score": 0.748,
+      "sections": {
+        "part1": 0.339,
+        "part2": 0.178,
+        "chapter6": 0.52
+      }
+    }
+  },
+  "notes": "\u57fa\u4e8eCNKI AIGC\u68c0\u6d4b\u7ed3\u679c\u6821\u51c6"
+}

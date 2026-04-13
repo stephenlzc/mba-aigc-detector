@@ -4,14 +4,26 @@ __pycache__/
 *$py.class
 *.so
 .Python
-*.egg-info/
-dist/
 build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# Virtual Environment
+# Virtual environments
 venv/
-env/
 ENV/
+env/
 .venv
 
 # IDE
@@ -21,42 +33,28 @@ ENV/
 *.swo
 *~
 
-# Environment Variables
-.env
-.env.local
-.env.*.local
-
-# Data Files (Large)
-*.json
-*.jsonl
+# Model weights (large files, download separately)
+models/*.pkl
+models/*.bin
 *.pkl
-*.pt
-*.pth
-*.bin
-*.h5
-*.model
+
+# Test files
+test_files/
+test_output/
+*.pdf
+*.docx
 
 # Logs
 *.log
 logs/
-log/
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Project Specific
-01_*/
-02_*/
-03_*/
-04_*/
-05_*/
-06_*/
-07_*/
-08_*/
-backup_*/
-roBERT_model/
+# Jupyter
+.ipynb_checkpoints/
 
-# Keep example configs
-!.env.example
-!example_*.json
+# Results
+results/
+output/
