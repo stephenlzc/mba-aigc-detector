@@ -94,11 +94,11 @@ def detect_document(input_path: Path, output_path: Path = None, models_dir: str 
         
         print(f"\n✓ JSON结果已保存: {output_path}")
         
-        # 自动生成HTML报告
+        # 自动生成HTML报告(全文标注版)
         try:
             from report_generator_html import HTMLReportGenerator
             html_path = output_path.with_suffix('.html')
-            generator = HTMLReportGenerator(output, str(input_path))
+            generator = HTMLReportGenerator(output, str(input_path), paragraphs)
             generator.generate(str(html_path))
         except Exception as e:
             print(f"  HTML报告生成失败: {e}")
