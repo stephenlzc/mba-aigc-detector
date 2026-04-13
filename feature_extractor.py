@@ -13,7 +13,7 @@ from typing import Dict
 class FeatureExtractor:
     """BERT + 统计特征提取器"""
     
-    def __init__(self, model_name: str = 'bert-base-chinese'):
+    def __init__(self, model_name: str = '/home/aigc/aigc_checker/roBERT_model'):
         """
         初始化特征提取器
         

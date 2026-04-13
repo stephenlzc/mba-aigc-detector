@@ -63,21 +63,45 @@ def detect_document(input_path: Path, output_path: Path = None, models_dir: str 
     
     # 保存结果
     if output_path:
+        import numpy as np
+        
+        # 自定义JSON编码器处理numpy类型
+        class NumpyEncoder(json.JSONEncoder):
+            def default(self, obj):
+                if isinstance(obj, np.bool_):
+                    return bool(obj)
+                if isinstance(obj, np.integer):
+                    return int(obj)
+                if isinstance(obj, np.floating):
+                    return float(obj)
+                if isinstance(obj, np.ndarray):
+                    return obj.tolist()
+                return super().default(obj)
+        
         output = {
             "input_file": str(input_path),
-            "doc_calibrated_score": result['doc_calibrated_score'],
-            "doc_raw_score": result['doc_raw_score'],
+            "doc_calibrated_score": float(result['doc_calibrated_score']),
+            "doc_raw_score": float(result['doc_raw_score']),
             "risk_level": result['risk_level'],
-            "ai_paragraph_count": result['ai_paragraph_count'],
-            "total_paragraphs": result['total_paragraphs'],
-            "ai_ratio": result['ai_ratio'],
-            "paragraph_results": result['paragraph_results'][:20]  # 只保存前20段
+            "ai_paragraph_count": int(result['ai_paragraph_count']),
+            "total_paragraphs": int(result['total_paragraphs']),
+            "ai_ratio": float(result['ai_ratio']),
+            "paragraph_results": result['paragraph_results'][:30]  # 保存前30段
         }
         
         with open(output_path, 'w', encoding='utf-8') as f:
-            json.dump(output, f, ensure_ascii=False, indent=2)
+            json.dump(output, f, ensure_ascii=False, indent=2, cls=NumpyEncoder)
         
-        print(f"\n✓ 详细结果已保存: {output_path}")
+        print(f"\n✓ JSON结果已保存: {output_path}")
+        
+        # 自动生成HTML报告
+        try:
+            from report_generator_html import HTMLReportGenerator
+            html_path = output_path.with_suffix('.html')
+            generator = HTMLReportGenerator(output, str(input_path))
+            generator.generate(str(html_path))
+        except Exception as e:
+            print(f"  HTML报告生成失败: {e}")
 
 
 def main():
