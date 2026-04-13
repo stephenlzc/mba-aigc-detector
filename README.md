@@ -2,8 +2,18 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![HuggingFace](https://img.shields.io/badge/HuggingFace-Model-orange.svg)](https://huggingface.co/stephenlzc/mba-aigc-detector)
 
 基于5模型并联融合的MBA论文AIGC风险识别系统。
+
+---
+
+## 项目链接
+
+| 平台 | 链接 | 说明 |
+|------|------|------|
+| **GitHub** | https://github.com/stephenlzc/mba-aigc-detector | 本仓库：完整代码、文档 |
+| **HuggingFace** | https://huggingface.co/stephenlzc/mba-aigc-detector | 预训练模型权重（~60KB） |
 
 ## 特点
 
@@ -22,10 +32,22 @@ pip install -r requirements.txt
 
 ### 下载模型
 
-从HuggingFace下载预训练模型:
+从HuggingFace下载预训练模型（总共~60KB，轻量高效）：
 
 ```bash
-huggingface-cli download your-username/mba-aigc-detector --local-dir ./models
+# 方法1: 使用huggingface-cli
+huggingface-cli download stephenlzc/mba-aigc-detector --local-dir ./models
+
+# 方法2: 使用git-lfs
+git lfs install
+git clone https://huggingface.co/stephenlzc/mba-aigc-detector ./models
+
+# 方法3: 直接下载
+wget https://huggingface.co/stephenlzc/mba-aigc-detector/resolve/main/select5_tree_d2.joblib -O ./models/select5_tree_d2.joblib
+wget https://huggingface.co/stephenlzc/mba-aigc-detector/resolve/main/select10_tree_d2.joblib -O ./models/select10_tree_d2.joblib
+wget https://huggingface.co/stephenlzc/mba-aigc-detector/resolve/main/select15_tree_d3.joblib -O ./models/select15_tree_d3.joblib
+wget https://huggingface.co/stephenlzc/mba-aigc-detector/resolve/main/select20_tree_d2.joblib -O ./models/select20_tree_d2.joblib
+wget https://huggingface.co/stephenlzc/mba-aigc-detector/resolve/main/bert_tree_d1.joblib -O ./models/bert_tree_d1.joblib
 ```
 
 ### 单文档检测
@@ -99,6 +121,21 @@ python inference.py paper.pdf
     ├─→ Select20_Tree ─┤  (任一阳性即阳性)
     └─→ BERT_Tree ─────┘
 ```
+
+### 模型大小优势
+
+本系统采用决策树架构，模型文件极小：
+
+| 模型 | 文件大小 | 说明 |
+|------|----------|------|
+| select5_tree_d2 | ~4KB | 5特征决策树 |
+| select10_tree_d2 | ~8KB | 10特征决策树 |
+| select15_tree_d3 | ~16KB | 15特征决策树 |
+| select20_tree_d2 | ~12KB | 20特征决策树 |
+| bert_tree_d1 | ~6KB | BERT特征决策树 |
+| **总计** | **~60KB** | 全部5个模型 |
+
+相比神经网络模型（通常几MB到几GB），本系统模型体积**缩小了99%以上**，适合轻量部署和资源受限环境。
 
 ## 性能指标
 
