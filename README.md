@@ -57,11 +57,35 @@ print(f"风险等级: {result['risk_level']}")
 ```python
 from fusion_detector_cnki_calibrated import create_calibrated_detector
 
+# 方法1: 通过参数指定模型目录
+detector = create_calibrated_detector(models_dir="./models")
+
+# 方法2: 通过环境变量设置模型目录
+import os
+os.environ["MBA_AIGC_MODEL_DIR"] = "./models"
 detector = create_calibrated_detector()
+
 result = detector.predict_document(features)
 
 # 输出接近CNKI的AI特征值
 print(f"CNKI校准AIGC分数: {result['doc_calibrated_score']:.1%}")
+```
+
+### 命令行使用
+
+```bash
+# 基本使用
+python inference.py paper.pdf
+
+# 指定输出文件
+python inference.py paper.pdf -o result.json
+
+# 指定模型目录
+python inference.py paper.pdf --models ./models -o result.json
+
+# 或通过环境变量设置模型目录
+export MBA_AIGC_MODEL_DIR="./models"
+python inference.py paper.pdf
 ```
 
 ## 模型架构

@@ -230,9 +230,22 @@ class FusionDetectorCNKICalibrated:
         return "\n".join(lines)
 
 
-def create_calibrated_detector() -> FusionDetectorCNKICalibrated:
-    """创建校准检测器的便捷函数"""
-    base_dir = Path(__file__).parent / "base_v2"
+def create_calibrated_detector(models_dir: str = None) -> FusionDetectorCNKICalibrated:
+    """
+    创建校准检测器的便捷函数
+    
+    Args:
+        models_dir: 模型目录路径，默认为当前目录下的models/
+    """
+    if models_dir is None:
+        # 默认从环境变量或当前目录获取
+        import os
+        models_dir = os.getenv("MBA_AIGC_MODEL_DIR", "./models")
+    
+    base_dir = Path(models_dir)
+    if not base_dir.exists():
+        raise FileNotFoundError(f"模型目录不存在: {base_dir}")
+    
     return FusionDetectorCNKICalibrated(models_dir=base_dir)
 
 
