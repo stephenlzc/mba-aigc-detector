@@ -1,3 +1,20 @@
+---
+language:
+  - zh
+  - en
+tags:
+  - aigc-detection
+  - text-classification
+  - decision-tree
+  - chinese
+  - academic-paper
+  - mba-thesis
+license: mit
+library_name: scikit-learn
+base_model:
+  - hfl/chinese-roberta-wwm-ext
+---
+
 # MBA论文AIGC检测系统
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -121,6 +138,16 @@ python inference.py paper.pdf
     ├─→ Select20_Tree ─┤  (任一阳性即阳性)
     └─→ BERT_Tree ─────┘
 ```
+
+### 预训练模型
+
+本系统的BERT特征提取基于中文RoBERTa模型：
+
+| 模型 | 来源 | 用途 | 链接 |
+|------|------|------|------|
+| **chinese-roberta-wwm-ext** | 哈工大讯飞联合实验室 | 768维语义特征提取 | https://huggingface.co/hfl/chinese-roberta-wwm-ext |
+
+RoBERTa (Robustly optimized BERT approach) 采用全词掩码(Whole Word Masking)技术，对中文文本有更好的表征能力。
 
 ### 模型大小优势
 
